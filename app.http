@@ -19,7 +19,7 @@ Content-Type: application/json
  "priority": "LOW",
  "status": "TO DO",
  "category": "HOME",
- "dueDate": "2021-02-22"
+ "dueDate": "2021-2-22"
 }
 
 ###

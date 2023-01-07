@@ -145,8 +145,8 @@ app.get("/agenda/", async (req, res) => {
 });
 
 // POST API 3: Adds new rows into the db as per the req body.
-app.post("/todos/", async (req, res) => {
-  const todoDetails = req.body;
+app.post("/todos/", async (request, response) => {
+  let todoDetails = request.body;
   const { id, todo, priority, status, category, dueDate } = todoDetails;
 
   const splitDueDate = dueDate
@@ -155,48 +155,30 @@ app.post("/todos/", async (req, res) => {
   let [year, month, date] = splitDueDate;
 
   if (!(status === "TO DO" || status === "IN PROGRESS" || status === "DONE")) {
-    res.status(400);
-    res.send("Invalid Todo Status");
+    response.status(400);
+    response.send("Invalid Todo Status");
   } else if (
     !(priority === "HIGH" || priority === "MEDIUM" || priority === "LOW")
   ) {
-    res.status(400);
-    res.send("Invalid Todo Priority");
+    response.status(400);
+    response.send("Invalid Todo Priority");
   } else if (
     !(category === "WORK" || category === "HOME" || category === "LEARNING")
   ) {
-    res.status(400);
-    res.send("Invalid Todo Category");
+    response.status(400);
+    response.send("Invalid Todo Category");
   } else if (!isValid(new Date(year, month, date))) {
-    res.status(400);
-    res.send("Invalid Due Date");
+    response.status(400);
+    response.send("Invalid Due Date");
   } else {
-    const checkTodoQuery = `
-					SELECT * FROM todo WHERE id = ${id};`;
-    const dbResponse = await db.get(checkTodoQuery);
-    if (dbResponse !== undefined) {
-      const updateTodoQuery = `
-					UPDATE
-						todo
-					SET
-						status = "${status}",
-						priority = "${priority}",
-						todo = "${todo}",
-						category = "${category}",
-						due_date = "${dueDate}"
-					WHERE
-						id = ${id};`;
-      await db.run(updateTodoQuery);
-      res.send("Todo Successfully Added");
-    } else {
-      const postTodoQuery = `
-						INSERT INTO
-							todo (id, todo, priority, status, category, due_date)
-						VALUES
-							(${id}, "${todo}", "${priority}", "${status}", "${category}", "${dueDate}");`;
-      await db.run(postTodoQuery);
-      res.send("Todo Successfully Added");
-    }
+    const formattedDate = format(new Date(year, month - 1, date), "yyyy-MM-dd");
+    const postTodoQuery = `
+				INSERT INTO
+					todo (id, todo, priority, status, category, due_date)
+				VALUES
+					(${id}, "${todo}", "${priority}", "${status}", "${category}", "${formattedDate}");`;
+    await db.run(postTodoQuery);
+    response.send("Todo Successfully Added");
   }
 });
 
