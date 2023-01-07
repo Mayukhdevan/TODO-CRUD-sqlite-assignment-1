@@ -1,0 +1,34 @@
+GET http://localhost:3000/todos/?category=LEARNING
+
+###
+
+GET http://localhost:3000/todos/7
+
+###
+
+GET http://localhost:3000/agenda/?date=2021-4-4
+
+###
+
+POST http://localhost:3000/todos/
+Content-Type: application/json
+
+{
+ "id": 7,
+ "todo": "Finalize event themes",
+ "priority": "LOW",
+ "status": "TO DO",
+ "category": "HOME",
+ "dueDate": "2021-02-22"
+}
+
+###
+
+PUT http://localhost:3000/todos/2
+Content-Type: application/json
+
+{ "dueDate": "2021-01-13" }
+
+###
+
+DELETE http://localhost:3000/todos/7
